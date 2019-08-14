@@ -1,6 +1,7 @@
 {
   "name": "nest-sftp",
   "author": "Benjamin Main",
+  "description": "Nest Framework wrapper around ssh2-sftp-client",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
