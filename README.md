@@ -20,7 +20,14 @@ $ npm install --save nest-sftp
 import { SftpModule } from 'nest-sftp';
 
 @Module({
-  imports: [SftpModule.forRoot({ host: 'fakehost.com', port: 20000 })],
+  imports: [
+    SftpModule.forRoot({
+      host: 'fakehost.com',
+      port: 20000,
+      username: 'fakeUser',
+      password: '*****',
+    }),
+  ],
   controllers: [],
   providers: [],
 })
