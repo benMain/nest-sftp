@@ -7,12 +7,24 @@ import { SFTPWrapper, ConnectConfig } from 'ssh2';
 describe('SftpClientService', () => {
   let service: SftpClientService;
   let sftpClient: SftpClient;
-  let putSftpSpy: jest.SpyInstance<Promise<string>, [string | Buffer | NodeJS.ReadableStream, string, TransferOptions?]>;
+  let putSftpSpy: jest.SpyInstance<
+    Promise<string>,
+    [string | Buffer | NodeJS.ReadableStream, string, TransferOptions?]
+  >;
   let listSftpSpy: jest.SpyInstance<Promise<SftpClient.FileInfo[]>, [string]>;
-  let getSftpSpy: jest.SpyInstance<Promise<string | NodeJS.ReadableStream | Buffer>, [string, (string | NodeJS.ReadableStream)?, boolean?]>;
+  let getSftpSpy: jest.SpyInstance<
+    Promise<string | NodeJS.ReadableStream | Buffer>,
+    [string, (string | NodeJS.ReadableStream)?, boolean?]
+  >;
   let deleteSftpSpy: jest.SpyInstance<Promise<string>, [string]>;
-  let makedirectorySftpSpy: jest.SpyInstance<Promise<string>, [string, boolean?]>;
-  let removeDirectorySftpSpy: jest.SpyInstance<Promise<string>, [string, boolean?]>;
+  let makedirectorySftpSpy: jest.SpyInstance<
+    Promise<string>,
+    [string, boolean?]
+  >;
+  let removeDirectorySftpSpy: jest.SpyInstance<
+    Promise<string>,
+    [string, boolean?]
+  >;
   let renameSftpSpy: jest.SpyInstance<Promise<string>, [string, string]>;
   let existsSftpSpy: jest.SpyInstance<Promise<boolean>, [string]>;
   let connectSftpSpy: jest.SpyInstance<Promise<SFTPWrapper>, [ConnectConfig]>;
@@ -68,7 +80,7 @@ describe('SftpClientService', () => {
     });
   });
   describe('list()', () => {
-    it ('should list', async () => {
+    it('should list', async () => {
       const remoteDirectory = '/remote/greetings';
       const fileInfo: SftpClient.FileInfo[] = [
         {
@@ -78,9 +90,9 @@ describe('SftpClientService', () => {
           modifyTime: 1565809762,
           accessTime: 1565809762,
           rights: {
-              user: 'all',
-              group: 'all',
-              other: 'all',
+            user: 'all',
+            group: 'all',
+            other: 'all',
           },
           owner: 2,
           group: 3,
