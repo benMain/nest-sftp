@@ -25,7 +25,7 @@ export class SftpClientService {
   async download(
     path: string,
     dst?: string | NodeJS.ReadableStream,
-    options?: ReadStreamOptions
+    options?: ReadStreamOptions,
   ): Promise<string | NodeJS.ReadableStream | Buffer> {
     // @ts-ignore
     return await this.sftpClient.get(path, dst, options);
