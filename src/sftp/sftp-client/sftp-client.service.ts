@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import SftpClient = require('ssh2-sftp-client');
-import { TransferOptions } from 'ssh2-streams';
 import { ConnectConfig } from 'ssh2';
+import { WriteStreamOptions, ReadStreamOptions } from 'ssh2-streams';
 
 @Injectable()
 export class SftpClientService {
@@ -13,7 +13,7 @@ export class SftpClientService {
   async upload(
     contents: string | Buffer | NodeJS.ReadableStream,
     remoteFilePath: string,
-    options: TransferOptions = null,
+    options: WriteStreamOptions = null,
   ): Promise<void> {
     await this.sftpClient.put(contents, remoteFilePath, options);
   }
@@ -25,9 +25,10 @@ export class SftpClientService {
   async download(
     path: string,
     dst?: string | NodeJS.ReadableStream,
-    options: boolean = false,
+    options?: ReadStreamOptions,
   ): Promise<string | NodeJS.ReadableStream | Buffer> {
-    return await this.sftpClient.get(path);
+    // @ts-ignore
+    return await this.sftpClient.get(path, dst, options);
   }
 
   async delete(remoteFilePath: string): Promise<void> {
