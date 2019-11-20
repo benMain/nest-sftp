@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SftpClientService } from './sftp-client.service';
 import SftpClient = require('ssh2-sftp-client');
-import { TransferOptions } from 'ssh2-streams';
+import { TransferOptions, WriteStreamOptions } from 'ssh2-streams';
 import { SFTPWrapper, ConnectConfig } from 'ssh2';
 
 describe('SftpClientService', () => {
@@ -70,13 +70,15 @@ describe('SftpClientService', () => {
     it('should upload', async () => {
       const contents = new Buffer('hello', 'utf8');
       const path = '/remote/greetings/hello.txt';
-      const transferOptions: TransferOptions = {
-        concurrency: 3,
-      };
+      const writeStreamOptions: WriteStreamOptions = {};
       putSftpSpy.mockReturnValue(Promise.resolve('success'));
-      await service.upload(contents, path, transferOptions);
+      await service.upload(contents, path, writeStreamOptions);
       expect(putSftpSpy).toHaveBeenCalledTimes(1);
-      expect(putSftpSpy).toHaveBeenCalledWith(contents, path, transferOptions);
+      expect(putSftpSpy).toHaveBeenCalledWith(
+        contents,
+        path,
+        writeStreamOptions,
+      );
     });
   });
   describe('list()', () => {
