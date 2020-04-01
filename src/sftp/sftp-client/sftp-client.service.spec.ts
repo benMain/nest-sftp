@@ -1,8 +1,10 @@
+import { ConnectConfig, SFTPWrapper } from 'ssh2';
 import { Test, TestingModule } from '@nestjs/testing';
-import { SftpClientService } from './sftp-client.service';
-import SftpClient = require('ssh2-sftp-client');
 import { TransferOptions, WriteStreamOptions } from 'ssh2-streams';
-import { SFTPWrapper, ConnectConfig } from 'ssh2';
+
+import { SftpClientService } from './sftp-client.service';
+
+import SftpClient = require('ssh2-sftp-client');
 
 describe('SftpClientService', () => {
   let service: SftpClientService;
@@ -26,7 +28,10 @@ describe('SftpClientService', () => {
     [string, boolean?]
   >;
   let renameSftpSpy: jest.SpyInstance<Promise<string>, [string, string]>;
-  let existsSftpSpy: jest.SpyInstance<Promise<boolean>, [string]>;
+  let existsSftpSpy: jest.SpyInstance<
+    Promise<false | 'd' | '-' | 'l'>,
+    [string]
+  >;
   let connectSftpSpy: jest.SpyInstance<Promise<SFTPWrapper>, [ConnectConfig]>;
 
   beforeEach(async () => {
@@ -53,7 +58,9 @@ describe('SftpClientService', () => {
     service = module.get<SftpClientService>(SftpClientService);
     sftpClient = module.get<SftpClient>(SftpClient);
     putSftpSpy = jest.spyOn(sftpClient, 'put');
+    // @ts-ignore
     listSftpSpy = jest.spyOn(sftpClient, 'list');
+    // @ts-ignore
     getSftpSpy = jest.spyOn(sftpClient, 'get');
     deleteSftpSpy = jest.spyOn(sftpClient, 'delete');
     makedirectorySftpSpy = jest.spyOn(sftpClient, 'mkdir');
@@ -158,11 +165,15 @@ describe('SftpClientService', () => {
   describe('exists()', () => {
     it('should check if file exists', async () => {
       const remotePath = '/remote/greetings/mean.txt';
-      existsSftpSpy.mockReturnValue(Promise.resolve(true));
-      const result = await service.exists(remotePath);
-      expect(result).toEqual(true);
+      existsSftpSpy.mockReturnValue(Promise.resolve(false));
+      const noFileResult = await service.exists(remotePath);
+      expect(noFileResult).toEqual(false);
       expect(existsSftpSpy).toHaveBeenCalledTimes(1);
       expect(existsSftpSpy).toHaveBeenCalledWith(remotePath);
+
+      existsSftpSpy.mockReturnValue(Promise.resolve('-'));
+      const fileResult = await service.exists(remotePath);
+      expect(fileResult).toEqual('-');
     });
   });
   describe('connect()', () => {

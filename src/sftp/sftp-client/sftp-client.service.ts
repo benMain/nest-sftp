@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import SftpClient = require('ssh2-sftp-client');
+import { ReadStreamOptions, WriteStreamOptions } from 'ssh2-streams';
+
 import { ConnectConfig } from 'ssh2';
-import { WriteStreamOptions, ReadStreamOptions } from 'ssh2-streams';
+
+import SftpClient = require('ssh2-sftp-client');
 
 @Injectable()
 export class SftpClientService {
@@ -56,7 +58,14 @@ export class SftpClientService {
     await this.sftpClient.rename(remoteSourcePath, remoteDestinationPath);
   }
 
-  async exists(remotePath: string): Promise<boolean> {
+  /**
+   * Tests to see if remote file or directory exists.
+   * Returns type of remote object if it exists or false if it does not.
+   *
+   * @param remotePath
+   * @returns false or d, -, l (dir, file or link)
+   */
+  async exists(remotePath: string): Promise<false | 'd' | '-' | 'l'> {
     return await this.sftpClient.exists(remotePath);
   }
 
