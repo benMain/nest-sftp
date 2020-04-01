@@ -1,3 +1,5 @@
+## [1.0.7](https://github.com/benMain/nest-sftp/compare/v1.0.6...v1.0.7) (2020-04-01)
+
 ## [1.0.6](https://github.com/benMain/nest-sftp/compare/v1.0.5...v1.0.6) (2019-12-31)
 
 ## [1.0.5](https://github.com/benMain/nest-sftp/compare/v1.0.4...v1.0.5) (2019-12-30)
