@@ -1,7 +1,9 @@
-import { Module, Global, DynamicModule } from '@nestjs/common';
-import { SftpClientService } from './sftp-client/sftp-client.service';
-import SftpClient = require('ssh2-sftp-client');
+import { DynamicModule, Global, Module } from '@nestjs/common';
+
 import { ConnectConfig } from 'ssh2';
+import { SftpClientService } from './sftp-client/sftp-client.service';
+
+import SftpClient = require('ssh2-sftp-client');
 
 @Global()
 @Module({
