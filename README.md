@@ -23,12 +23,39 @@ import { SftpModule } from 'nest-sftp';
 
 @Module({
   imports: [
-    SftpModule.forRoot({
-      host: 'fakehost.com',
-      port: 20000,
-      username: 'fakeUser',
-      password: '*****',
-    }),
+    SftpModule.forRoot(
+      {
+        host: 'fakehost.com',
+        port: 22,
+        username: 'fakeUser',
+        password: '*****', // passwords should not contain \ (thy should be espaced like \\) and they cannot contain ! or (
+      },
+      false,
+    ),
+  ],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}
+```
+
+With debug logging:
+
+```typescript
+import { SftpModule } from 'nest-sftp';
+
+@Module({
+  imports: [
+    SftpModule.forRoot(
+      {
+        host: 'fakehost.com',
+        port: 22,
+        username: 'fakeUser',
+        password: '*****', // passwords should not contain \ (thy should be espaced like \\) and they cannot contain ! or (
+        debug: console.log, // adds logging for researching problems
+      },
+      false,
+    ),
   ],
   controllers: [],
   providers: [],
@@ -55,6 +82,15 @@ export class AppService {
     localPath: string,
   ): Promise<string | NodeJS.ReadableStream | Buffer> {
     return await this.sftpClient.download(remotePath, localPath);
+  }
+  // change connection to a different user/password prior to upload
+  async submit(
+    remotePath: string,
+    localPath: string,
+    submitConfig: ConnectConfig,
+  ): Promise<string | NodeJS.ReadableStream | Buffer> {
+    await this.sftpClient.resetConnection(submitConfig);
+    return await this.sftpClient.upload(remotePath, localPath);
   }
 }
 ```
