@@ -33,7 +33,7 @@ jobs:
             npm run lint
   release:
     docker:
-      - image: circleci/node:8.16.0
+      - image: circleci/node:13
     working_directory: ~/repo
     steps:
       - checkout
