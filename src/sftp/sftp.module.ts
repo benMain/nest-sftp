@@ -11,7 +11,10 @@ import SftpClient = require('ssh2-sftp-client');
   exports: [SftpClientService],
 })
 export class SftpModule {
-  static forRoot(config: ConnectConfig): DynamicModule {
+  static forRoot(
+    config: ConnectConfig,
+    delayConnection: boolean = false,
+  ): DynamicModule {
     return {
       module: SftpModule,
       providers: [
@@ -20,7 +23,9 @@ export class SftpModule {
           provide: SftpClient,
           useFactory: async () => {
             const client = new SftpClient();
-            await client.connect(config);
+            if (!delayConnection) {
+              await client.connect(config);
+            }
             return client;
           },
         },

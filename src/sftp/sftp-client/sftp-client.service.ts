@@ -12,6 +12,15 @@ export class SftpClientService {
     this.logger = new Logger(SftpClientService.name);
   }
 
+  /**
+   * Sets the sftp connection, updates/creates the connection used in initialization.
+   *
+   * @param config
+   */
+  async resetConnection(config: ConnectConfig): Promise<void> {
+    await this.sftpClient.connect(config);
+  }
+
   async upload(
     contents: string | Buffer | NodeJS.ReadableStream,
     remoteFilePath: string,
