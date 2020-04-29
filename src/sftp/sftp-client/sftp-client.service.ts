@@ -13,12 +13,20 @@ export class SftpClientService {
   }
 
   /**
-   * Sets the sftp connection, updates/creates the connection used in initialization.
+   * Resets the sftp connection, updates/creates the connection used in initialization.
    *
    * @param config
    */
   async resetConnection(config: ConnectConfig): Promise<void> {
+    await this.sftpClient.end();
     await this.sftpClient.connect(config);
+  }
+
+  /**
+   * Closes the current connection.
+   */
+  async disconnect() {
+    await this.sftpClient.end();
   }
 
   async upload(
