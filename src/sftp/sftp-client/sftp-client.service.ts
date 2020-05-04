@@ -12,14 +12,26 @@ export class SftpClientService {
     this.logger = new Logger(SftpClientService.name);
   }
 
+  async client() {
+    return this.sftpClient;
+  }
+
   /**
    * Resets the sftp connection, updates/creates the connection used in initialization.
    *
    * @param config
    */
   async resetConnection(config: ConnectConfig): Promise<void> {
-    await this.sftpClient.end();
-    await this.sftpClient.connect(config);
+    try {
+      await this.sftpClient.end();
+      await this.sftpClient.connect(config);
+    } catch (ex) {
+      if (ex.code === 'ERR_NOT_CONNECTED') {
+        await this.sftpClient.connect(config);
+      } else {
+        throw ex;
+      }
+    }
   }
 
   /**
@@ -29,12 +41,21 @@ export class SftpClientService {
     await this.sftpClient.end();
   }
 
+  /**
+   * Returns remote file information.
+   *
+   * @param remotePath the remote file location
+   */
+  async stat(remotePath: string): Promise<SftpClient.FileStats> {
+    return await this.sftpClient.stat(remotePath);
+  }
+
   async upload(
     contents: string | Buffer | NodeJS.ReadableStream,
     remoteFilePath: string,
     options: WriteStreamOptions = null,
-  ): Promise<void> {
-    await this.sftpClient.put(contents, remoteFilePath, options);
+  ): Promise<string> {
+    return await this.sftpClient.put(contents, remoteFilePath, options);
   }
 
   async list(remoteDirectory: string): Promise<SftpClient.FileInfo[]> {
