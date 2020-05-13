@@ -102,6 +102,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## Stay in touch
 
 - Author - [Benjamin Main](mailto::bmain@lumeris.com)
+- Author - [Victor Frank](mailto::vfrank@lumeris.com)
 
 ## License
 
