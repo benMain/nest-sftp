@@ -33,6 +33,8 @@ describe('SftpClientService', () => {
     [string]
   >;
   let connectSftpSpy: jest.SpyInstance<Promise<SFTPWrapper>, [ConnectConfig]>;
+  let statSpy: jest.SpyInstance;
+  let endSpy: jest.SpyInstance;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -50,6 +52,8 @@ describe('SftpClientService', () => {
             rename: () => null,
             exists: () => null,
             connect: () => null,
+            stat: () => null,
+            end: () => null,
           },
         },
       ],
@@ -68,6 +72,8 @@ describe('SftpClientService', () => {
     renameSftpSpy = jest.spyOn(sftpClient, 'rename');
     existsSftpSpy = jest.spyOn(sftpClient, 'exists');
     connectSftpSpy = jest.spyOn(sftpClient, 'connect');
+    statSpy = jest.spyOn(sftpClient, 'stat');
+    endSpy = jest.spyOn(sftpClient, 'end');
   });
 
   it('should be defined', () => {
@@ -186,6 +192,39 @@ describe('SftpClientService', () => {
       await service.connect(config);
       expect(connectSftpSpy).toHaveBeenCalledTimes(1);
       expect(connectSftpSpy).toHaveBeenCalledWith(config);
+    });
+  });
+
+  describe('resetConnection()', () => {
+    it('should connect', async () => {
+      const config: ConnectConfig = {
+        host: 'fakehost.faker.com',
+        port: 2023,
+      };
+      endSpy.mockRejectedValue({ code: 'ERR_NOT_CONNECTED' });
+      connectSftpSpy.mockReturnValue(Promise.resolve(null));
+
+      await service.resetConnection(config);
+      expect(endSpy).toHaveBeenCalledTimes(1);
+      expect(connectSftpSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('stat()', () => {
+    it('should retrieve file info', async () => {
+      const remoteFilePath = '/test-remote/filepath.txt';
+      statSpy.mockReturnValue(Promise.resolve({}));
+      await service.stat(remoteFilePath);
+      expect(statSpy).toHaveBeenCalledTimes(1);
+      expect(statSpy).toHaveBeenCalledWith(remoteFilePath);
+    });
+  });
+
+  describe('disconnect()', () => {
+    it('should end connection', async () => {
+      endSpy.mockReturnValue(Promise.resolve());
+      await service.disconnect();
+      expect(endSpy).toHaveBeenCalledTimes(1);
     });
   });
 });
