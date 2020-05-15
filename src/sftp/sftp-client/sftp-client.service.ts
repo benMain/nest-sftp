@@ -1,5 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ReadStreamOptions, WriteStreamOptions, TransferOptions } from 'ssh2-streams';
+import {
+  ReadStreamOptions,
+  TransferOptions,
+  WriteStreamOptions,
+} from 'ssh2-streams';
 
 import { ConnectConfig } from 'ssh2';
 
@@ -66,7 +70,7 @@ export class SftpClientService {
     path: string,
     dst?: string | NodeJS.WritableStream,
     options?: TransferOptions,
-): Promise<string | NodeJS.WritableStream | Buffer> {
+  ): Promise<string | NodeJS.WritableStream | Buffer> {
     // @ts-ignore
     return await this.sftpClient.get(path, dst, options);
   }
