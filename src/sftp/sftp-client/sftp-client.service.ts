@@ -132,7 +132,7 @@ export class SftpClientService {
   async download(
     path: string,
     dst?: string | NodeJS.WritableStream,
-    options?: TransferOptions,
+    options?: WriteStreamOptions,
   ): Promise<string | NodeJS.WritableStream | Buffer> {
     // @ts-ignore
     return await this.sftpClient.get(path, dst, options);
