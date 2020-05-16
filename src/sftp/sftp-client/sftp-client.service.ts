@@ -16,7 +16,7 @@ export class SftpClientService {
     this.logger = new Logger(SftpClientService.name);
   }
 
-  async client() {
+  client() {
     return this.sftpClient;
   }
 
@@ -46,12 +46,42 @@ export class SftpClientService {
   }
 
   /**
-   * Returns remote file information.
+   * Returns the attributes associated with the object pointed to by remotePath
    *
    * @param remotePath the remote file location
+   *
+   * @returns
+   * ```
+   * let stats = {
+   *   mode: 33279, // integer representing type and permissions
+   *   uid: 1000, // user ID
+   *   gid: 985, // group ID
+   *   size: 5, // file size
+   *   accessTime: 1566868566000, // Last access time. milliseconds
+   *   modifyTime: 1566868566000, // last modify time. milliseconds
+   *   isDirectory: false, // true if object is a directory
+   *   isFile: true, // true if object is a file
+   *   isBlockDevice: false, // true if object is a block device
+   *   isCharacterDevice: false, // true if object is a character device
+   *   isSymbolicLink: false, // true if object is a symbolic link
+   *   isFIFO: false, // true if object is a FIFO
+   *   isSocket: false // true if object is a socket
+   * };
+   * ```
    */
   async stat(remotePath: string): Promise<SftpClient.FileStats> {
     return await this.sftpClient.stat(remotePath);
+  }
+
+  /**
+   * Converts a relative path to an absolute path on the remote server.
+   * This method is mainly used internally to resolve remote path names.
+   * Returns '' if the path is not valid.
+   *
+   * @param remotePath A file path, either relative or absolute. Can handle '.' and '..', but does not expand '~'.
+   */
+  async realPath(remotePath: string): Promise<string> {
+    return await this.sftpClient.realPath(remotePath);
   }
 
   async upload(
@@ -62,10 +92,41 @@ export class SftpClientService {
     return await this.sftpClient.put(contents, remoteFilePath, options);
   }
 
-  async list(remoteDirectory: string): Promise<SftpClient.FileInfo[]> {
+  /**
+   * Retrieves a directory listing. This method returns a Promise, which once realised, returns an array of objects representing items in the remote directory.
+   *
+   * @param remoteDirectory {String} Remote directory path
+   * @param pattern (optional) {string|RegExp} A pattern used to filter the items included in the returned array. Pattern can be a simple glob-style string or a regular expression. Defaults to /.* &#8205;/
+   *
+   */
+  async list(
+    remoteDirectory: string,
+    pattern?: string | RegExp,
+  ): Promise<SftpClient.FileInfo[]> {
     return await this.sftpClient.list(remoteDirectory);
   }
 
+  /**
+   * Retrieve a file from a remote SFTP server.
+   * The dst argument defines the destination and can be either a string,
+   * a stream object or undefined. If it is a string, it is interpreted as the
+   * path to a location on the local file system (path should include the file name).
+   * If it is a stream object, the remote data is passed to it via a call to pipe().
+   * If dst is undefined, the method will put the data into a buffer and return that buffer when the Promise is resolved.
+   * If dst is defined, it is returned when the Promise is resolved.
+   *
+   * @param path String. Path to the remote file to download
+   * @param dst String|Stream. Destination for the data. If a string, it should be a local file path.
+   * @param options ```
+   * {
+   *   flags: 'r',
+   *   encoding: null,
+   *   handle: null,
+   *   mode: 0o666,
+   *   autoClose: true
+   * }
+   * ```
+   */
   async download(
     path: string,
     dst?: string | NodeJS.WritableStream,
