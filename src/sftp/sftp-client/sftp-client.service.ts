@@ -93,10 +93,12 @@ export class SftpClientService {
   }
 
   /**
-   * Retrieves a directory listing. This method returns a Promise, which once realised, returns an array of objects representing items in the remote directory.
+   * Retrieves a directory listing. This method returns a Promise, which once realised,
+   * returns an array of objects representing items in the remote directory.
    *
    * @param remoteDirectory {String} Remote directory path
-   * @param pattern (optional) {string|RegExp} A pattern used to filter the items included in the returned array. Pattern can be a simple glob-style string or a regular expression. Defaults to /.* &#8205;/
+   * @param pattern (optional) {string|RegExp} A pattern used to filter the items included in the returned array.
+   * Pattern can be a simple glob-style string or a regular expression. Defaults to /.* &#8205;/
    *
    */
   async list(
