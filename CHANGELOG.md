@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/benMain/nest-sftp/compare/v1.0.13...v1.1.0) (2020-10-13)
+
+
+### Features
+
+* **ForRouteAsync:** Add For Route Async entrypoint. ([85f4f2b](https://github.com/benMain/nest-sftp/commit/85f4f2b15d711fc14acf1bb4d57d836c9886e9ae))
+
 ## [1.0.13](https://github.com/benMain/nest-sftp/compare/v1.0.12...v1.0.13) (2020-09-14)
 
 ## [1.0.12](https://github.com/benMain/nest-sftp/compare/v1.0.11...v1.0.12) (2020-08-10)
