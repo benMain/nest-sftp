@@ -27,7 +27,7 @@ export class ConfigService {
         inject: [ConfigService],
         imports: [TestRootModuleAsync],
       },
-      false,
+      true,
     ),
   ],
   providers: [ConfigService],
@@ -38,6 +38,7 @@ class TestRootModuleAsync {}
 describe('SftpModule', () => {
   describe('forRootAsync()', () => {
     it('should instantiate?', async () => {
+      jest.setTimeout(30000);
       process.env.SFTP_HOST = 'test.rebex.net';
       process.env.SFTP_PORT = '22';
       process.env.SFTP_USERNAME = 'demo';
@@ -47,6 +48,7 @@ describe('SftpModule', () => {
       );
       const service = module.get<SftpClientService>(SftpClientService);
       expect(service).toBeDefined();
+      await module.close()
     });
   });
 });
