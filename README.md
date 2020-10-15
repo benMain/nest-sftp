@@ -16,7 +16,34 @@ $ npm install --save nest-sftp
 
 ## Register in AppModule
 
-Register the SftpModule in you App Module. The Options object implements the ConnectConfig from ssh2.
+Register the SftpModule in you App Module.
+
+This version uses forRootAsync
+
+```typescript
+import { SftpModule } from 'nest-sftp';
+
+@Module({
+  imports: [
+    SftpModule.forRootAsync(
+      {
+        useFactory: (configService: ConfigService) => {
+          return configService.getSftpConnectionInfo();
+        },
+        inject: [ConfigService],
+        imports: [AppModule],
+      },
+      false,
+    ),
+  ],
+  controllers: [],
+  providers: [ConfigService],
+  exports: [ConfigService],
+})
+export class AppModule {}
+```
+
+The Options object implements the ConnectConfig from ssh2.
 
 ```typescript
 import { SftpModule } from 'nest-sftp';
