@@ -48,7 +48,7 @@ describe('SftpModule', () => {
       );
       const service = module.get<SftpClientService>(SftpClientService);
       expect(service).toBeDefined();
-      await module.close()
+      await module.close();
     });
   });
 });
