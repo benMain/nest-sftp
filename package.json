@@ -35,15 +35,15 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "dependencies": {
-    "@nestjs/common": "^7.0.7",
-    "@nestjs/core": "^7.0.7",
+    "@nestjs/common": "^9.2.0",
+    "@nestjs/core": "^9.2.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.7",
     "ssh2-sftp-client": "^9.0.4"
   },
   "devDependencies": {
-    "@nestjs/testing": "7.0.7",
+    "@nestjs/testing": "9.2.0",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
     "@types/jest": "^29.2.2",
