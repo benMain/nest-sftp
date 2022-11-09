@@ -83,7 +83,7 @@ export class SftpClientService {
   async upload(
     contents: string | Buffer | NodeJS.ReadableStream,
     remoteFilePath: string,
-    options: WriteStreamOptions = null,
+    options: WriteStreamOptions,
   ): Promise<string> {
     return await this.sftpClient.put(contents, remoteFilePath, {
       writeStreamOptions: options,
@@ -99,10 +99,7 @@ export class SftpClientService {
    * Pattern can be a simple glob-style string or a regular expression. Defaults to /.* &#8205;/
    *
    */
-  async list(
-    remoteDirectory: string,
-    pattern?: string | RegExp,
-  ): Promise<SftpClient.FileInfo[]> {
+  async list(remoteDirectory: string): Promise<SftpClient.FileInfo[]> {
     return await this.sftpClient.list(remoteDirectory);
   }
 
@@ -132,24 +129,22 @@ export class SftpClientService {
     dst?: string | NodeJS.WritableStream,
     options?: WriteStreamOptions,
   ): Promise<string | NodeJS.WritableStream | Buffer> {
-    // @ts-ignore
-    return await this.sftpClient.get(path, dst, options);
+    return await this.sftpClient.get(path, dst, {
+      writeStreamOptions: options,
+    });
   }
 
   async delete(remoteFilePath: string): Promise<void> {
     await this.sftpClient.delete(remoteFilePath);
   }
 
-  async makeDirectory(
-    remoteFilePath: string,
-    recursive: boolean = true,
-  ): Promise<void> {
+  async makeDirectory(remoteFilePath: string, recursive = true): Promise<void> {
     await this.sftpClient.mkdir(remoteFilePath, recursive);
   }
 
   async removeDirectory(
     remoteFilePath: string,
-    recursive: boolean = true,
+    recursive = true,
   ): Promise<void> {
     await this.sftpClient.rmdir(remoteFilePath, recursive);
   }
