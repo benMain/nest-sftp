@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ConnectConfig } from 'ssh2';
-import { WriteStreamOptions } from 'ssh2-sftp-client';
+import { TransferOptions } from 'ssh2-streams';
 
 import SftpClient = require('ssh2-sftp-client');
 
@@ -83,11 +83,9 @@ export class SftpClientService {
   async upload(
     contents: string | Buffer | NodeJS.ReadableStream,
     remoteFilePath: string,
-    options: WriteStreamOptions = null,
+    transferOptions?: TransferOptions,
   ): Promise<string> {
-    return await this.sftpClient.put(contents, remoteFilePath, {
-      writeStreamOptions: options,
-    });
+    return await this.sftpClient.put(contents, remoteFilePath, transferOptions);
   }
 
   /**
@@ -103,7 +101,7 @@ export class SftpClientService {
     remoteDirectory: string,
     pattern?: string | RegExp,
   ): Promise<SftpClient.FileInfo[]> {
-    return await this.sftpClient.list(remoteDirectory);
+    return await this.sftpClient.list(remoteDirectory, pattern);
   }
 
   /**
@@ -130,9 +128,8 @@ export class SftpClientService {
   async download(
     path: string,
     dst?: string | NodeJS.WritableStream,
-    options?: WriteStreamOptions,
+    options?: SftpClient.TransferOptions,
   ): Promise<string | NodeJS.WritableStream | Buffer> {
-    // @ts-ignore
     return await this.sftpClient.get(path, dst, options);
   }
 
@@ -140,16 +137,13 @@ export class SftpClientService {
     await this.sftpClient.delete(remoteFilePath);
   }
 
-  async makeDirectory(
-    remoteFilePath: string,
-    recursive: boolean = true,
-  ): Promise<void> {
+  async makeDirectory(remoteFilePath: string, recursive = true): Promise<void> {
     await this.sftpClient.mkdir(remoteFilePath, recursive);
   }
 
   async removeDirectory(
     remoteFilePath: string,
-    recursive: boolean = true,
+    recursive = true,
   ): Promise<void> {
     await this.sftpClient.rmdir(remoteFilePath, recursive);
   }

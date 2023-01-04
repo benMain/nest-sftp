@@ -19,7 +19,7 @@ export class ConfigService {
         useFactory: (configService: ConfigService) => {
           return {
             host: configService.get('SFTP_HOST'),
-            port: (configService.get('SFTP_PORT') as unknown) as number,
+            port: configService.get('SFTP_PORT') as unknown as number,
             username: configService.get('SFTP_USERNAME'),
             password: configService.get('SFTP_PASSWORD'),
           };
