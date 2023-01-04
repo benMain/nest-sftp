@@ -1,8 +1,9 @@
 import { ConnectConfig, SFTPWrapper } from 'ssh2';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TransferOptions, WriteStreamOptions } from 'ssh2-streams';
 
+import { FileInfo } from 'ssh2-sftp-client';
 import { SftpClientService } from './sftp-client.service';
+import { TransferOptions } from 'ssh2-streams';
 
 import SftpClient = require('ssh2-sftp-client');
 
@@ -13,7 +14,10 @@ describe('SftpClientService', () => {
     Promise<string>,
     [string | Buffer | NodeJS.ReadableStream, string, TransferOptions?]
   >;
-  let listSftpSpy: jest.SpyInstance<Promise<SftpClient.FileInfo[]>, [string]>;
+  let listSftpSpy: jest.SpyInstance<
+    Promise<FileInfo[]>,
+    [remoteFilePath: string, pattern?: string | RegExp]
+  >;
   let getSftpSpy: jest.SpyInstance<
     Promise<string | NodeJS.ReadableStream | Buffer>,
     [string, (string | NodeJS.ReadableStream)?, boolean?]
@@ -62,11 +66,9 @@ describe('SftpClientService', () => {
     service = module.get<SftpClientService>(SftpClientService);
     sftpClient = module.get<SftpClient>(SftpClient);
     putSftpSpy = jest.spyOn(sftpClient, 'put');
-    // @ts-ignore
     listSftpSpy = jest.spyOn(sftpClient, 'list');
-    // @ts-ignore
-    getSftpSpy = jest.spyOn(sftpClient, 'get');
-    deleteSftpSpy = jest.spyOn(sftpClient, 'delete');
+    getSftpSpy = jest.spyOn(sftpClient, 'get') as any;
+    deleteSftpSpy = jest.spyOn(sftpClient, 'delete') as any;
     makedirectorySftpSpy = jest.spyOn(sftpClient, 'mkdir');
     removeDirectorySftpSpy = jest.spyOn(sftpClient, 'rmdir');
     renameSftpSpy = jest.spyOn(sftpClient, 'rename');
@@ -83,15 +85,11 @@ describe('SftpClientService', () => {
     it('should upload', async () => {
       const contents = new Buffer('hello', 'utf8');
       const path = '/remote/greetings/hello.txt';
-      const writeStreamOptions: WriteStreamOptions = {};
+      const transferOptions: TransferOptions = {};
       putSftpSpy.mockReturnValue(Promise.resolve('success'));
-      await service.upload(contents, path, writeStreamOptions);
+      await service.upload(contents, path, transferOptions);
       expect(putSftpSpy).toHaveBeenCalledTimes(1);
-      expect(putSftpSpy).toHaveBeenCalledWith(
-        contents,
-        path,
-        writeStreamOptions,
-      );
+      expect(putSftpSpy).toHaveBeenCalledWith(contents, path, transferOptions);
     });
   });
   describe('list()', () => {
@@ -99,7 +97,7 @@ describe('SftpClientService', () => {
       const remoteDirectory = '/remote/greetings';
       const fileInfo: SftpClient.FileInfo[] = [
         {
-          type: 'file',
+          type: 'd',
           name: 'screwoff.json',
           size: 1000,
           modifyTime: 1565809762,
@@ -117,7 +115,7 @@ describe('SftpClientService', () => {
       const response = await service.list(remoteDirectory);
       expect(response).toEqual(fileInfo);
       expect(listSftpSpy).toHaveBeenCalledTimes(1);
-      expect(listSftpSpy).toHaveBeenCalledWith(remoteDirectory);
+      expect(listSftpSpy).toHaveBeenCalledWith(remoteDirectory, undefined);
     });
   });
   describe('download()', () => {
