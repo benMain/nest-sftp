@@ -1,3 +1,10 @@
+# [2.0.0](https://github.com/benMain/nest-sftp/compare/v1.1.8...v2.0.0) (2023-01-04)
+
+
+### Bug Fixes
+
+* **ssh2-sftp-client:** fixes timeout bug ([221dd0e](https://github.com/benMain/nest-sftp/commit/221dd0e60bcebbabe7aa9b8f6ae9c8771fe0eda8))
+
 ## [1.1.8](https://github.com/benMain/nest-sftp/compare/v1.1.7...v1.1.8) (2021-10-05)
 
 ## [1.1.7](https://github.com/benMain/nest-sftp/compare/v1.1.6...v1.1.7) (2021-07-22)
