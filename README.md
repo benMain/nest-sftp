@@ -109,7 +109,7 @@ export class AppService {
   async download(
     remotePath: string,
     localPath: string,
-  ): Promise<string | NodeJS.ReadableStream | Buffer> {
+  ): Promise<string | NodeJS.WritableStream | Buffer> {
     return await this.sftpClient.download(remotePath, localPath);
   }
   // change connection to a different user/password prior to upload
