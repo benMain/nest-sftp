@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ConnectConfig } from 'ssh2';
-import { TransferOptions } from 'ssh2-streams';
 
-import SftpClient = require('ssh2-sftp-client');
+import * as SftpClient from 'ssh2-sftp-client';
 
 @Injectable()
 export class SftpClientService {
@@ -83,7 +82,7 @@ export class SftpClientService {
   async upload(
     contents: string | Buffer | NodeJS.ReadableStream,
     remoteFilePath: string,
-    transferOptions?: TransferOptions,
+    transferOptions?: SftpClient.TransferOptions,
   ): Promise<string> {
     return await this.sftpClient.put(contents, remoteFilePath, transferOptions);
   }

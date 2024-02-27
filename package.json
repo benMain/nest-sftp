@@ -40,8 +40,7 @@
     "@nestjs/core": "7 - 10"
   },
   "dependencies": {
-    "ssh2-sftp-client": "^8.1.0",
-    "ssh2-streams": "^0.4.10"
+    "ssh2-sftp-client": "^10.0.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -54,7 +53,7 @@
     "@semantic-release/git": "^10.0.1",
     "@types/jest": "^29.5.6",
     "@types/node": "^20.8.9",
-    "@types/ssh2-sftp-client": "^7.0.1",
+    "@types/ssh2-sftp-client": "^7.1.4",
     "@types/supertest": "^2.0.15",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",

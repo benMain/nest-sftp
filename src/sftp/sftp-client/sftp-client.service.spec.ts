@@ -3,16 +3,19 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { FileInfo } from 'ssh2-sftp-client';
 import { SftpClientService } from './sftp-client.service';
-import { TransferOptions } from 'ssh2-streams';
 
-import SftpClient = require('ssh2-sftp-client');
+import * as SftpClient from 'ssh2-sftp-client';
 
 describe('SftpClientService', () => {
   let service: SftpClientService;
   let sftpClient: SftpClient;
   let putSftpSpy: jest.SpyInstance<
     Promise<string>,
-    [string | Buffer | NodeJS.ReadableStream, string, TransferOptions?]
+    [
+      string | Buffer | NodeJS.ReadableStream,
+      string,
+      SftpClient.TransferOptions?,
+    ]
   >;
   let listSftpSpy: jest.SpyInstance<
     Promise<FileInfo[]>,
@@ -83,9 +86,9 @@ describe('SftpClientService', () => {
   });
   describe('upload()', () => {
     it('should upload', async () => {
-      const contents = new Buffer('hello', 'utf8');
+      const contents = Buffer.from('hello', 'utf8');
       const path = '/remote/greetings/hello.txt';
-      const transferOptions: TransferOptions = {};
+      const transferOptions: SftpClient.TransferOptions = {};
       putSftpSpy.mockReturnValue(Promise.resolve('success'));
       await service.upload(contents, path, transferOptions);
       expect(putSftpSpy).toHaveBeenCalledTimes(1);
@@ -194,15 +197,47 @@ describe('SftpClientService', () => {
   });
 
   describe('resetConnection()', () => {
-    it('should connect', async () => {
+    it('should try to connect and if there is an error retry depending on the code', async () => {
       const config: ConnectConfig = {
         host: 'fakehost.faker.com',
         port: 2023,
       };
-      endSpy.mockRejectedValue({ code: 'ERR_NOT_CONNECTED' });
-      connectSftpSpy.mockReturnValue(Promise.resolve(null));
+      endSpy.mockResolvedValue(null);
+      connectSftpSpy
+        .mockResolvedValue(null)
+        .mockRejectedValueOnce({ code: 'ERR_NOT_CONNECTED' });
 
       await service.resetConnection(config);
+      expect(endSpy).toHaveBeenCalledTimes(1);
+      expect(connectSftpSpy).toHaveBeenCalledTimes(2);
+    });
+    it('should work as anticipated', async () => {
+      const config: ConnectConfig = {
+        host: 'fakehost.faker.com',
+        port: 2023,
+      };
+      endSpy.mockResolvedValue(null);
+      connectSftpSpy.mockResolvedValue(null);
+      await service.resetConnection(config);
+      expect(endSpy).toHaveBeenCalledTimes(1);
+      expect(connectSftpSpy).toHaveBeenCalledTimes(1);
+    });
+    it('should throw if the error is unhandlable', async () => {
+      const config: ConnectConfig = {
+        host: 'fakehost.faker.com',
+        port: 2023,
+      };
+      endSpy.mockResolvedValue(null);
+      connectSftpSpy
+        .mockResolvedValue(null)
+        .mockRejectedValueOnce({ code: 'Random Error' });
+      let expectedError = null;
+      try {
+        await service.resetConnection(config);
+      } catch (err) {
+        expectedError = err;
+      }
+      expect(expectedError).not.toBeNull();
       expect(endSpy).toHaveBeenCalledTimes(1);
       expect(connectSftpSpy).toHaveBeenCalledTimes(1);
     });
@@ -223,6 +258,13 @@ describe('SftpClientService', () => {
       endSpy.mockReturnValue(Promise.resolve());
       await service.disconnect();
       expect(endSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('client()', () => {
+    it('should return the sftp client', () => {
+      const client = service.client();
+      expect(client).toBeDefined();
     });
   });
 });
