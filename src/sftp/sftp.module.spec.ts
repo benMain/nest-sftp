@@ -43,9 +43,8 @@ describe('SftpModule', () => {
       process.env.SFTP_PORT = '22';
       process.env.SFTP_USERNAME = 'demo';
       process.env.SFTP_PASSWORD = 'password';
-      const module = await NestFactory.createApplicationContext(
-        TestRootModuleAsync,
-      );
+      const module =
+        await NestFactory.createApplicationContext(TestRootModuleAsync);
       const service = module.get<SftpClientService>(SftpClientService);
       expect(service).toBeDefined();
       await module.close();
