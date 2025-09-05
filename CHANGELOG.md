@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/benMain/nest-sftp/compare/v3.0.0...v3.1.0) (2025-09-05)
+
+
+### Features
+
+* **Nest11:** Add Nestjs11. ([c80579c](https://github.com/benMain/nest-sftp/commit/c80579c593b92ab360d5422e07181ad38e871612))
+
 # [3.0.0](https://github.com/benMain/nest-sftp/compare/v2.0.3...v3.0.0) (2024-02-27)
 
 ## [2.0.3](https://github.com/benMain/nest-sftp/compare/v2.0.2...v2.0.3) (2023-06-20)
