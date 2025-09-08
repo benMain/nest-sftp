@@ -1,7 +1,10 @@
-import { AsyncProvider, ImportableFactoryProvider } from './async-types';
+import {
+  AsyncProvider,
+  ConnectConfigExt,
+  ImportableFactoryProvider,
+} from './async-types';
 import { DynamicModule, Global, Module } from '@nestjs/common';
 
-import { ConnectConfig } from 'ssh2';
 import { SftpClientService } from './sftp-client/sftp-client.service';
 
 import * as SftpClient from 'ssh2-sftp-client';
@@ -13,7 +16,7 @@ import * as SftpClient from 'ssh2-sftp-client';
 })
 export class SftpModule {
   static forRoot(
-    config: ConnectConfig,
+    config: ConnectConfigExt,
     delayConnection = false,
   ): DynamicModule {
     return {
@@ -23,8 +26,9 @@ export class SftpModule {
         {
           provide: SftpClient,
           useFactory: async () => {
+            const delay = config?.delayConnection ?? delayConnection;
             const client = new SftpClient();
-            if (!delayConnection) {
+            if (!delay) {
               await client.connect(config);
             }
             return client;
@@ -36,7 +40,7 @@ export class SftpModule {
   }
 
   static forRootAsync(
-    config: AsyncProvider<ConnectConfig | Promise<ConnectConfig>>,
+    config: AsyncProvider<ConnectConfigExt | Promise<ConnectConfigExt>>,
     delayConnection = false,
   ): DynamicModule {
     const configToken = 'CONNECT_CONFIG';
@@ -48,9 +52,10 @@ export class SftpModule {
         SftpClientService,
         {
           provide: SftpClient,
-          useFactory: async (connectConfig: ConnectConfig) => {
+          useFactory: async (connectConfig: ConnectConfigExt) => {
+            const delay = connectConfig?.delayConnection ?? delayConnection;
             const client = new SftpClient();
-            if (!delayConnection) {
+            if (!delay) {
               await client.connect(connectConfig);
             }
             return client;
@@ -61,7 +66,7 @@ export class SftpModule {
       exports: [SftpClientService],
     };
 
-    this.addAsyncProvider<ConnectConfig>(module, configToken, config, false);
+    this.addAsyncProvider<ConnectConfigExt>(module, configToken, config, false);
     return module;
   }
 
